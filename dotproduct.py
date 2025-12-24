@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import math
+#import pigpio
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -9,6 +10,11 @@ from mpl_toolkits.mplot3d import Axes3D
 
 ALPHA = 0.5
 MAX_DELTA = 5
+
+PIN_R_SHOULDER, PIN_R_ELBOW = 18, 17
+PIN_L_SHOULDER, PIN_L_ELBOW = 27, 22
+
+#pi = pigpio.pi()
 
 prev_angles = {
     'rs': 90, 're': 90,
@@ -27,6 +33,12 @@ def rate_limit(prev, new):
     if abs(d) > MAX_DELTA:
         new = prev + math.copysign(MAX_DELTA, d)
     return new
+
+def set_servo_angle(pin, angle):
+   # min_limit, max_limit = LIMITS[joint_type]
+    #safe_angle = max(min_limit, min(max_limit, angle))
+    pulse = MIN_PULSE + (safe_angle / 180.0) * (MAX_PULSE - MIN_PULSE)
+    # pi.set_servo_pulsewidth(pin, pulse)
 
 def is_visible(lm, t=0.6):
     return lm.visibility > t
@@ -111,6 +123,8 @@ def main():
 
                 rs = smooth('rs', rate_limit(prev_angles['rs'], rs))
                 re = smooth('re', rate_limit(prev_angles['re'], re))
+                set_servo_angle(PIN_R_SHOULDER, rs)
+                set_servo_angle(PIN_R_ELBOW, re )
 
                 # CV2 draw
                 draw_arm_lines(frame, r_hp, r_sh, r_el, r_wr)
@@ -151,6 +165,8 @@ def main():
 
                 ls = smooth('ls', rate_limit(prev_angles['ls'], ls))
                 le = smooth('le', rate_limit(prev_angles['le'], le))
+                set_servo_angle(PIN_L_SHOULDER, ls)
+                set_servo_angle(PIN_L_ELBOW, le )                
 
                 # CV2 draw
                 draw_arm_lines(frame, l_hp, l_sh, l_el, l_wr)
@@ -177,7 +193,9 @@ def main():
     cap.release()
     plt.ioff()
     plt.show()
+    #pi.stop()
 
 if __name__ == "__main__":
     main()
+
 
