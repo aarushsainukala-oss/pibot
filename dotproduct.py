@@ -12,6 +12,10 @@ from mediapipe.framework.formats import landmark_pb2
 ALPHA = 0.5
 MAX_DELTA = 5
 
+# Servo Pulse Widths (Calibration)
+MIN_PULSE = 500  # 0 Degrees
+MAX_PULSE = 2500 # 180 Degrees
+
 PIN_R_SHOULDER, PIN_R_ELBOW = 18, 17
 PIN_L_SHOULDER, PIN_L_ELBOW = 27, 22
 
@@ -36,10 +40,10 @@ def rate_limit(prev, new):
     return new
 
 def set_servo_angle(pin, angle):
-    pass
+    
    # min_limit, max_limit = LIMITS[joint_type]
     #safe_angle = max(min_limit, min(max_limit, angle))
-    #pulse = MIN_PULSE + (safe_angle / 180.0) * (MAX_PULSE - MIN_PULSE)
+    pulse = MIN_PULSE + (safe_angle / 180.0) * (MAX_PULSE - MIN_PULSE)
     # pi.set_servo_pulsewidth(pin, pulse)
 
 def is_visible(lm, t=0.6):
@@ -199,6 +203,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
