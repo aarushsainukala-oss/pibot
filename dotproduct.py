@@ -30,6 +30,7 @@ def rate_limit(prev, new):
 
 def is_visible(lm, t=0.6):
     return lm.visibility > t
+epsilon = 0.1    
 
 def angle_yz(a, b, c):
     ba = np.array([a.y - b.y, a.z - b.z])
@@ -98,10 +99,15 @@ def main():
             r_el = lm[14]
             r_wr = lm[16]
             r_hp = lm[24]
+            a  = mp.solutions.pose.landmark_pb2.NormalizedLandmark()
+            a.x = r_sh.x
+            a.y = r_sh.y + epsilon
+            a.z = r_sh.z
+            a.visibility = r_sh.visibility            
 
             if all(is_visible(p) for p in [r_sh, r_el, r_wr, r_hp]):
                 re = angle_yz(r_sh, r_el, r_wr)
-                rs = angle_yz(r_hp, r_sh, r_el)
+                rs = angle_yz(a, r_sh, r_el)
 
                 rs = smooth('rs', rate_limit(prev_angles['rs'], rs))
                 re = smooth('re', rate_limit(prev_angles['re'], re))
@@ -133,10 +139,15 @@ def main():
             l_el = lm[13]
             l_wr = lm[15]
             l_hp = lm[23]
+            b = mp.solutions.pose.landmark_pb2.NormalizedLandmark()
+            b.x = l_sh.x
+            b.y = l_sh.y + 0.1
+            b.z = l_sh.z 
+            b.visibility = l_sh.visibility            
 
             if all(is_visible(p) for p in [l_sh, l_el, l_wr, l_hp]):
                 le = angle_yz(l_sh, l_el, l_wr)
-                ls = angle_yz(l_hp, l_sh, l_el)
+                ls = angle_yz(b, l_sh, l_el)
 
                 ls = smooth('ls', rate_limit(prev_angles['ls'], ls))
                 le = smooth('le', rate_limit(prev_angles['le'], le))
@@ -169,3 +180,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
