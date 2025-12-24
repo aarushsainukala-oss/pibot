@@ -5,6 +5,7 @@ import math
 #import pigpio
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from mediapipe.framework.formats import landmark_pb2
 
 # ---------------- CONFIG ----------------
 
@@ -35,9 +36,10 @@ def rate_limit(prev, new):
     return new
 
 def set_servo_angle(pin, angle):
+    pass
    # min_limit, max_limit = LIMITS[joint_type]
     #safe_angle = max(min_limit, min(max_limit, angle))
-    pulse = MIN_PULSE + (safe_angle / 180.0) * (MAX_PULSE - MIN_PULSE)
+    #pulse = MIN_PULSE + (safe_angle / 180.0) * (MAX_PULSE - MIN_PULSE)
     # pi.set_servo_pulsewidth(pin, pulse)
 
 def is_visible(lm, t=0.6):
@@ -111,7 +113,7 @@ def main():
             r_el = lm[14]
             r_wr = lm[16]
             r_hp = lm[24]
-            a  = mp.solutions.pose.landmark_pb2.NormalizedLandmark()
+            a  = landmark_pb2.NormalizedLandmark()
             a.x = r_sh.x
             a.y = r_sh.y + epsilon
             a.z = r_sh.z
@@ -153,7 +155,7 @@ def main():
             l_el = lm[13]
             l_wr = lm[15]
             l_hp = lm[23]
-            b = mp.solutions.pose.landmark_pb2.NormalizedLandmark()
+            b = landmark_pb2.NormalizedLandmark()
             b.x = l_sh.x
             b.y = l_sh.y + 0.1
             b.z = l_sh.z 
@@ -197,5 +199,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
