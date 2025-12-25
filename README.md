@@ -9,3 +9,5 @@ pigpoid.service:
 sudo systemctl daemon-reload
 <br>
 sudo systemctl enable pigpiod
+<br>
+check status : sudo systemctl status pigpiod
