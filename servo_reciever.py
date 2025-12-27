@@ -25,15 +25,15 @@ SERVO_MAX = 2500   # µs
 def angle_to_duty(angle):
     angle = max(0, min(180, angle))
     pulse_us = SERVO_MIN + (angle / 180.0) * (SERVO_MAX - SERVO_MIN)
-    duty = int(pulse_us * 4096 / 20000)  # 20 ms period
+    duty = int(pulse_us * 65535 / 20000)  # 20 ms period
     return duty
 
 # ================= SERVO CHANNEL MAP =================
 SERVO_MAP = {
     "R_SHOULDER": 0,
-    "R_ELBOW": 1,
-    "L_SHOULDER": 2,
-    "L_ELBOW": 3
+    "R_ELBOW": 4,
+    "L_SHOULDER": 8,
+    "L_ELBOW": 12
 }
 
 # ================= MAIN LOOP =================
@@ -44,7 +44,7 @@ while True:
 
     try:
         joint, angle = msg.split(":")
-        angle = float(angle)
+        angle = float(angle.strip())
 
         if joint in SERVO_MAP:
             ch = SERVO_MAP[joint]
@@ -53,3 +53,4 @@ while True:
 
     except Exception as e:
         print("Error:", e)
+
